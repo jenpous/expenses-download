@@ -1,0 +1,22 @@
+{
+  "name": "expense-download",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "convert-csv-to-json": "^2.0.0",
+    "csv-parser": "^1.12.1",
+    "filepix": "^1.0.9",
+    "https": "^1.0.0",
+    "lodash": "^4.17.21",
+    "pdf-merger-js": "^4.3.0",
+    "process": "^0.11.10",
+    "sax": "^1.2.4"
+  }
+}
