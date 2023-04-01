@@ -2,11 +2,11 @@
 const csvToJson = require('convert-csv-to-json');
 const PDFMerger = require('pdf-merger-js');
 const _ = require('lodash');
-const filePix = require('filepix');
 const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const process = require('process');
+const PDFDocument = require('pdfkit');
 
 // Configuration
 // Todo: Please adjust
@@ -143,6 +143,42 @@ const prepareAndDownloadFiles = async () => {
     }
 }
 
+
+const createPDF = (pages, size) => {
+    const doc = new PDFDocument({ margin: 0, size })
+
+    for (let index = 0; index < pages.length; index++) {
+
+        doc.image(pages[index], 0, 0, { fit: size, align: 'center', valign: 'center' })
+
+        if (pages.length !== index + 1) {
+            doc.addPage()
+        }
+    }
+    doc.end()
+    return doc
+};
+
+// size = A4
+const imgToPDF = async (pages = [], output, options = { size: [595.28, 841.89] }) => {
+    let dir;
+    return new Promise((resolve, reject) => {
+        if (pages && pages.length > 0) {
+
+            createPDF(pages, options.size).pipe(fs.createWriteStream(output))
+                .on('finish', () => {
+                    console.log("Converted File CLOSED")
+                    resolve();
+
+                });
+            if (dir) {
+                rimraf.sync(dir);
+            }
+        }
+    })
+}
+
+
 const convertToPDF = async () => {
     let pages;
     let output;
@@ -150,11 +186,12 @@ const convertToPDF = async () => {
         const convertedReceiptsFileName = `${exportURLs[i].expenseId}-receipts.pdf`
         if (exportURLs[i].receiptsToConvert.length > 0) {
 
-            await filePix.img2PDF(
+            await imgToPDF(
                 pages = exportURLs[i].receiptsToConvert,
                 output = convertedReceiptsFileName);
+
+            console.log("Converting files successful to pdf")
         }
-        console.log("Converting files successful")
     }
 }
 
