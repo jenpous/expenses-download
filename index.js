@@ -199,14 +199,17 @@ const mergePDFs = async (expenseFileName, expenseId, convertedReceipts, receipts
     const merger = new PDFMerger();
     try {
         await merger.add(expenseFileName);
-        await receipts.forEach((pdf) => {
-            merger.add(`${pdf}`)
-        })
+
+        if (receipts.length > 0) {
+            for (let i = 0; i < receipts.length; i++) {
+                await merger.add(receipts[i])
+            }
+        }
+
         if (convertedReceipts.length > 0) {
             await merger.add(`${expenseId}-receipts.pdf`);
         }
         await merger.save(`EXPENSE-REPORT-${expenseId}-plus-${receipts.length + convertedReceipts.length}-receipts.pdf`);
-
         console.log("Merge successful")
     } catch (e) {
         console.log(e)
